@@ -1,0 +1,140 @@
+---
+import ThemeToggle from './ThemeToggle.tsx';
+---
+
+<header class="fixed top-0 left-0 right-0 z-40 bg-light-bg/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-light-border dark:border-dark-border">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo/Brand -->
+      <div class="flex-shrink-0">
+        <a href="/" class="text-xl font-bold text-gradient hover:opacity-80 transition-opacity">
+          Your Name
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-8">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/projects" class="nav-link">Projects</a>
+          <a href="/papers" class="nav-link">Papers</a>
+          <a href="/pustaka" class="nav-link">Pustaka</a>
+          <a href="/about" class="nav-link">About</a>
+        </div>
+      </div>
+
+      <!-- Theme Toggle & Mobile Menu Button -->
+      <div class="flex items-center space-x-4">
+        <ThemeToggle client:load />
+        
+        <div class="md:hidden">
+          <button
+            id="mobile-menu-button"
+            type="button"
+            class="relative w-6 h-6"
+            aria-controls="mobile-menu"
+            aria-expanded="false"
+          >
+            <span class="sr-only">Open main menu</span>
+
+            <!-- Ikon Hamburger -->
+            <svg id="hamburger-icon" class="absolute top-0 left-0 w-6 h-6 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+
+            <!-- Ikon Tutup -->
+            <svg id="close-icon" class="absolute top-0 left-0 w-6 h-6 transition-all duration-300 opacity-0 scale-80" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel Menu Mobile -->
+  <div class="md:hidden hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 bg-light-surface dark:bg-dark-surface border-t border-light-border dark:border-dark-border">
+      <a href="/" class="block px-3 py-2 rounded-md font-medium text-light-text dark:text-dark-text hover:text-light-accent dark:hover:text-dark-accent hover:bg-light-border dark:hover:bg-dark-border transition-colors duration-200">Home</a>
+      <a href="/projects" class="block px-3 py-2 rounded-md font-medium text-light-text dark:text-dark-text hover:text-light-accent dark:hover:text-dark-accent hover:bg-light-border dark:hover:bg-dark-border transition-colors duration-200">Projects</a>
+      <a href="/papers" class="block px-3 py-2 rounded-md font-medium text-light-text dark:text-dark-text hover:text-light-accent dark:hover:text-dark-accent hover:bg-light-border dark:hover:bg-dark-border transition-colors duration-200">Papers</a>
+      <a href="/pustaka" class="block px-3 py-2 rounded-md font-medium text-light-text dark:text-dark-text hover:text-light-accent dark:hover:text-dark-accent hover:bg-light-border dark:hover:bg-dark-border transition-colors duration-200">Pustaka</a>
+      <a href="/about" class="block px-3 py-2 rounded-md font-medium text-light-text dark:text-dark-text hover:text-light-accent dark:hover:text-dark-accent hover:bg-light-border dark:hover:bg-dark-border transition-colors duration-200">About</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Menghapus @apply dan menggunakan kelas Tailwind langsung di HTML. */
+  /* Menyisakan style untuk pseudo-element yang tidak bisa dibuat dengan Tailwind. */
+  .nav-link {
+    position: relative;
+    color: var(--color-text); /* Menggunakan variabel CSS untuk tema */
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+  }
+  .nav-link:hover {
+    color: var(--color-accent);
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease-in-out;
+  }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Memilih elemen berdasarkan ID agar lebih kuat dan jelas
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    // PENJAGA (GUARD CLAUSE): Memeriksa apakah semua elemen ada sebelum melanjutkan.
+    // Ini menyelesaikan semua error "possibly 'null' or 'undefined'".
+    if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) {
+      console.error('Elemen interaktif Navbar tidak ditemukan. Menu mobile tidak akan berfungsi.');
+      return; // Menghentikan eksekusi script jika ada elemen yang hilang
+    }
+
+    /**
+     * Fungsi untuk membuka atau menutup menu mobile.
+     * @param {boolean} open - True untuk membuka, false untuk menutup.
+     */
+    const toggleMenu = (open: boolean) => {
+      mobileMenu.classList.toggle('hidden', !open);
+      mobileMenuButton.setAttribute('aria-expanded', String(open));
+      
+      // Toggle animasi ikon
+      hamburgerIcon.classList.toggle('opacity-0', open);
+      hamburgerIcon.classList.toggle('scale-80', open);
+      closeIcon.classList.toggle('opacity-0', !open);
+      closeIcon.classList.toggle('scale-80', !open);
+    };
+
+    // Event listener untuk tombol utama
+    mobileMenuButton.addEventListener('click', () => {
+      const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+      toggleMenu(!isExpanded);
+    });
+
+    // Menutup menu saat salah satu link di dalamnya diklik
+    const mobileNavLinks = mobileMenu.querySelectorAll('a');
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        toggleMenu(false); // Selalu tutup menu saat link diklik
+      });
+    });
+  });
+</script>
